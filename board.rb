@@ -13,7 +13,7 @@ class Board
 
   def initialize
     @grid = Array.new(8) { Array.new(8) { EmptySpace.new } }
-    @cursor_pos = 0,0
+    @cursor_pos = 0, 0
     @helper = true
     @selected_piece = nil
     populate_board
@@ -48,8 +48,11 @@ class Board
 
   end
 
-  def select_piece
-    @selected_piece = self[*cursor_pos] unless self[*cursor_pos].class == EmptySpace
+  def select_piece(colour)
+    # debugger
+    unless self[*cursor_pos].class == EmptySpace || self[*cursor_pos].colour != colour
+      @selected_piece = self[*cursor_pos]
+    end
   end
 
   def render
@@ -93,7 +96,7 @@ class Board
     dx, dy = CURSOR_MOVES[direction]
     x, y = cursor_pos
 
-    @cursor_pos = dx + x, dy + y
+    @cursor_pos = dx + x, dy + y if on_board?([dx + x, dy + y])
   end
 
   def valid?(move)

@@ -16,7 +16,8 @@ class Game
 
   def initialize
     @board = Board.new
-    @player1, @player2 = Player.new("White"), Player.new("Black")
+    @player1 = Player.new("Player 1", :white) 
+    @player2 = Player.new("Player 2", :black)
     @current_player = @player1
     @quit_var = false
     @move_completed = false
@@ -26,8 +27,6 @@ class Game
     piece = nil
     until over? || force_quit?
       until moved? || force_quit?
-
-
         render_board
         char = current_player.get_move
         handle_char(char)
@@ -43,7 +42,7 @@ class Game
   end
 
   def change_current_player
-    current_player == @player1 ? current_player = @player2 : current_player = @player1
+    current_player == @player1 ? self.current_player = @player2 : self.current_player = @player1
     @move_completed = false
   end
 
@@ -74,7 +73,7 @@ class Game
     when "\r"
       # debugger
       if board.selected_piece.nil?
-        board.select_piece
+        board.select_piece(current_player.colour)
       else
         if board.selected_piece.move_to(board.cursor_pos)
 
@@ -91,10 +90,11 @@ class Game
 end
 
 class Player
-  attr_reader :name
+  attr_reader :name, :colour
 
-  def initialize(name)
+  def initialize(name, colour)
     @name = name
+    @colour = colour
   end
 
   def get_move
