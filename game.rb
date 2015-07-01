@@ -1,4 +1,5 @@
 require 'byebug'
+require_relative 'piece'
 require_relative 'board'
 
 class Game
@@ -15,7 +16,6 @@ class Game
     until over?
       render_board
       char = player1.get_move
-      p char
       cursor_move(char)
     end
   end
@@ -33,7 +33,14 @@ class Game
     case char
     when "q"
       self.quit_var = true
-    
+    when "a"
+      board.move_cursor(:left)
+    when "s"
+      board.move_cursor(:down)
+    when "d"
+      board.move_cursor(:right)
+    when "w"
+      board.move_cursor(:up)
     end
 
   end
@@ -48,5 +55,7 @@ class Player
   end
 end
 
-g = Game.new
-g.play
+if __FILE__ == $PROGRAM_NAME
+  g = Game.new
+  g.play
+end
