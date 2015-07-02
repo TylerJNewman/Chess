@@ -24,8 +24,6 @@ class Pawn < Piece
   def possible_moves
     possible_moves = []
 
-
-
     if check_two_forward?(moves[1], moves[2])
       move = add_direction_to_pos(moves[2])
       possible_moves << move
@@ -43,10 +41,6 @@ class Pawn < Piece
       possible_moves << move
     end
 
-    # diagonal_jump?[moves[0]]
-    # movecheck_one_forward?
-
-
     possible_moves
   end
 
@@ -54,10 +48,9 @@ class Pawn < Piece
     first_move = add_direction_to_pos(first_move)
     second_move = add_direction_to_pos(second_move)
 
-    # debugger
     return false if moved?
     if board[*first_move].class == EmptySpace
-      if board[*second_move].class == EmptySpace 
+      if board[*second_move].class == EmptySpace
         return true
       end
     end
@@ -67,14 +60,15 @@ class Pawn < Piece
 
   def check_one_forward?(delta)
     new_pos = add_direction_to_pos(delta)
-    return false unless board[*new_pos].class == EmptySpace
-    true
+    # debugger
+    board.on_board?(new_pos) && board[*new_pos].class == EmptySpace
+    #
+    # true
   end
 
   def check_diagonal(delta)
-
     new_pos = add_direction_to_pos(delta)
-    # debugger
+
     return false unless board.on_board?(new_pos)
     return true if board[*new_pos].class != EmptySpace && board[*new_pos].colour != self.colour
     false

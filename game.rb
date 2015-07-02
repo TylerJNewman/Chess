@@ -6,6 +6,7 @@ require_relative 'bishop'
 require_relative 'queen'
 require_relative 'king'
 require_relative 'pawn'
+require 'yaml'
 
 
 require_relative 'board'
@@ -16,8 +17,8 @@ class Game
 
   def initialize
     @board = Board.new
-    @player1 = Player.new("Player 1", :white) 
-    @player2 = Player.new("Player 2", :black)
+    @player1 = Player.new("Player 1 - White", :white)
+    @player2 = Player.new("Player 2 - Black", :black)
     @current_player = @player1
     @quit_var = false
     @move_completed = false
@@ -32,13 +33,17 @@ class Game
         handle_char(char)
       end
       change_current_player
+      check_if_check(current_player)
     end
+
+    win_message unless force_quit?
   end
 
   def render_board
     system("clear")
     board.render
     puts current_player.name
+    puts "Piece selected: #{board.selected_piece}#{board.selected_piece.class}" unless board.selected_piece.nil?
   end
 
   def change_current_player
@@ -50,8 +55,36 @@ class Game
     quit_var
   end
 
+  def check_if_check(current_player)
+    king = find_king(current_player)
+    if board.check?(current_player.colour)
+      king.is_in_danger
+    else
+      king.is_safe
+    end
+  end
+
+  def find_king(current_player)
+    (0..7).each do |row|
+      (0..7).each do |col|
+        pos = row, col
+        if board[*pos].class == King && board[*pos].colour == current_player.colour
+          return board[*pos]
+        end
+      end
+    end
+  end
+
+  def win_message
+    puts "#{current_player.name} is in Checkmate!"
+  end
+
+  def check?
+    board.check?(current_player.colour)
+  end
+
   def over?
-    false
+    board.checkmate?(current_player.colour)
   end
 
   def moved?
@@ -82,8 +115,11 @@ class Game
         end
         board.selected_piece = nil
       end
+    when "v"
+      File.open("saved_version", 'w') do |file|
+        file.print self.to_yaml
+      end
     end
-
   end
 
 
@@ -104,6 +140,13 @@ class Player
 end
 
 if __FILE__ == $PROGRAM_NAME
-  g = Game.new
+  puts "Do you want to load a saved game? (y/n)"
+  input = gets.chomp
+  if input[0].downcase == "y"
+    saved_version = File.open("saved_version")
+    g = YAML::load(saved_version)
+  else
+    g = Game.new
+  end
   g.play
 end
