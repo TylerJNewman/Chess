@@ -1,4 +1,5 @@
 require 'colorize'
+require 'byebug'
 require 'io/console'
 
 class Board
@@ -14,7 +15,7 @@ class Board
   def initialize
     @grid = Array.new(8) { Array.new(8) { EmptySpace.new } }
     @cursor_pos = 0, 0
-    @helper = true
+    @helper = false
     @selected_piece = nil
     populate_board
   end
@@ -57,10 +58,12 @@ class Board
 
   def render
     print " "
-    (0..7).each { |col_index| print " #{col_index}"}
+    ("a".."h").each { |col_index| print " #{col_index}"}
     puts
+    row_label = 8
     (0..7).each do |row|
-      print row
+      print row_label
+      row_label -= 1
       (0..7).each do |col|
         pos = row, col
         object_on_tile = self[*pos]
@@ -68,7 +71,7 @@ class Board
         case
         when @cursor_pos == [*pos]
           print object_on_tile.to_s.on_light_yellow
-        when (selected_piece || self[*cursor_pos]).actual_possible_moves.include?([*pos])
+        when (selected_piece || self[*cursor_pos]).possible_moves.include?([*pos])
           print object_on_tile.to_s.on_light_cyan
         when (row + col).even?
           print object_on_tile.to_s.on_light_white
@@ -83,8 +86,12 @@ class Board
   end
 
   def [](*pos)
-    row,col = pos
-    grid[row][col]
+    begin
+      row,col = pos
+      grid[row][col]
+    rescue NoMethodError
+      byebug
+    end
   end
 
   def []=(*pos,value)
