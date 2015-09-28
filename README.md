@@ -10,6 +10,7 @@ Implemented features:
 * Highlights possible moves
 * Turns king red to notify player is in check
 * Support for saving/loading a game
+* asdfasdfasfd
 
 
 ![alt tag](http://i.imgur.com/bj3FGtV.png)
