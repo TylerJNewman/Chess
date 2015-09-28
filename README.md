@@ -13,5 +13,5 @@ Features:
 * Support for saving/loading a game
 
 
-![alt tag](http://i.imgur.com/DFDUCZQ.gif)
+![alt tag](http://i.imgur.com/76GVUxc.gif)
 
